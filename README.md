@@ -54,7 +54,7 @@ This project simulates a real-world digital banking experience, focusing on usab
 
 ### 💻 Dashboard Overview
 
-![SmartFinance Dashboard](./screenshots/dashboard.png)
+Fintech-application/screenshots
 
 ### 📊 Spending Analytics & Transaction Management
 
