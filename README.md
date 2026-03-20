@@ -1,5 +1,7 @@
 # 💰 SmartFinance Dashboard
 
+A modern fintech dashboard built to simulate real-world financial tracking applications with scalable architecture and user-focused design.
+
 ## Overview
 
 SmartFinance Dashboard is a fintech-style web application designed to help users track transactions, manage budgets, and visualize financial data in a clean and intuitive interface.
@@ -80,7 +82,13 @@ This project reflects my interest in financial technology and building modern, u
 
 ---
 
-## 🔗 Live Demo
+## Key Features Implemented
+
+- Dynamic transaction management (add, filter, categorize)
+- Financial data aggregation (income, expenses, savings)
+- Interactive data visualization using charts
+- Modular architecture using hooks and service layers
+- Local persistence using browser storage## 🔗 Live Demo
 
 (https://bparker81597.github.io/smart-finance-dashboard/)
 ---
