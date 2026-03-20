@@ -8,7 +8,7 @@ This project simulates a real-world digital banking experience, focusing on usab
 
 ---
 
-## 🚀 Features
+## 🚀 Features 
 
 * 📊 Transaction tracking (income & expenses)
 * 💳 Budget management with category limits
