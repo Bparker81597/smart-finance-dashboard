@@ -53,8 +53,8 @@ This project simulates a real-world digital banking experience, focusing on usab
 
 
 ### 💻 Dashboard Overview
+<img width="1871" height="945" alt="image" src="https://github.com/user-attachments/assets/e239fa83-764c-4a37-9cd3-f28de2a7d743" />
 
-Fintech-application/screenshots/dashboard.png
 ### 📊 Spending Analytics & Transaction Management
 
 A clean, user-focused interface that highlights financial insights, transaction tracking, and budgeting tools in a modern fintech layout.
