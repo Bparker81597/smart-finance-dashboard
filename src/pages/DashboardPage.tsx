@@ -12,10 +12,12 @@ import { InsightsGrid } from "../components/insights/InsightsGrid";
 import { NotificationsPopover } from "../components/notifications/NotificationsPopover";
 import { ExportCSVButton } from "../components/transactions/ExportCSVButton";
 import { DarkModeToggle } from "../components/ui/DarkModeToggle";
+import { EditBalanceModal } from "../components/dashboard/EditBalanceModal";
 import { useTransactions } from "../hooks/useTransactions";
 import { formatCurrency } from "../utils/currency";
 import { authService } from "../services/authService";
 import { Transaction } from "../types/finance";
+import { useState } from "react";
 
 interface DashboardPageProps {
   userId: string;
@@ -23,6 +25,8 @@ interface DashboardPageProps {
 }
 
 export default function DashboardPage({ userId, onSignOut }: DashboardPageProps) {
+  const [balance, setBalance] = useState(5420.88);
+  const [showEditBalance, setShowEditBalance] = useState(false);
   const { search, setSearch, filteredTransactions, totals, addTransaction, updateTransaction, deleteTransaction, isLoading, error } = useTransactions(userId);
 
   return (
@@ -41,11 +45,19 @@ export default function DashboardPage({ userId, onSignOut }: DashboardPageProps)
         </div>
 
         <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
-          <DashboardStat title="Available Balance" value={formatCurrency(totals.balance)} icon={Wallet} change="Updated today" />
+          <DashboardStat title="Available Balance" value={formatCurrency(balance)} icon={Wallet} change="Updated today" onEdit={() => setShowEditBalance(true)} />
           <DashboardStat title="Monthly Income" value={formatCurrency(totals.income)} icon={ArrowUpRight} change="+4.2% vs last month" />
           <DashboardStat title="Monthly Spending" value={formatCurrency(totals.expenses)} icon={ArrowDownRight} change="-2.1% vs last month" />
           <DashboardStat title="Estimated Savings" value={formatCurrency(totals.savings)} icon={PiggyBank} change="On track this month" />
         </section>
+
+        {showEditBalance && (
+          <EditBalanceModal
+            currentBalance={balance}
+            onSave={setBalance}
+            onClose={() => setShowEditBalance(false)}
+          />
+        )}
 
         <section className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8">
           <SpendingChartCard transactions={filteredTransactions} />

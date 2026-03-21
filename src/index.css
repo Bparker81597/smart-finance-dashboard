@@ -13,3 +13,94 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* Dark mode styles */
+html.dark {
+  color-scheme: dark;
+}
+
+html.dark body {
+  background-color: #0f172a;
+  color: #f1f5f9;
+}
+
+html.dark .bg-slate-50 {
+  background-color: #0f172a;
+}
+
+html.dark .bg-white {
+  background-color: #1e293b;
+}
+
+html.dark .text-slate-900 {
+  color: #f1f5f9;
+}
+
+html.dark .text-slate-500 {
+  color: #94a3b8;
+}
+
+html.dark .text-slate-600 {
+  color: #cbd5e1;
+}
+
+html.dark .border-slate-200 {
+  border-color: #334155;
+}
+
+html.dark .border-slate-100 {
+  border-color: #334155;
+}
+
+html.dark .border-slate-300 {
+  border-color: #475569;
+}
+
+html.dark .bg-slate-100 {
+  background-color: #1e293b;
+}
+
+html.dark .bg-slate-200\/70 {
+  background-color: #1e293b;
+}
+
+html.dark .bg-emerald-100 {
+  background-color: #064e3b;
+}
+
+html.dark .text-emerald-600 {
+  color: #34d399;
+}
+
+html.dark .text-slate-700 {
+  color: #e2e8f0;
+}
+
+html.dark .hover\:bg-slate-50:hover {
+  background-color: #1e293b;
+}
+
+html.dark .hover\:bg-red-50:hover {
+  background-color: #450a0a;
+}
+
+html.dark .hover\:bg-blue-50:hover {
+  background-color: #1e3a5f;
+}
+
+html.dark input {
+  background-color: #1e293b;
+  border-color: #475569;
+  color: #f1f5f9;
+}
+
+html.dark select {
+  background-color: #1e293b;
+  border-color: #475569;
+  color: #f1f5f9;
+}
+
+html.dark .card {
+  background-color: #1e293b;
+  border-color: #334155;
+}
