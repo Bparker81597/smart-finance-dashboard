@@ -54,17 +54,32 @@ export function useTransactions(userId?: string) {
     const parsedAmount = Number(input.amount);
     if (!input.merchant || Number.isNaN(parsedAmount) || parsedAmount === 0) return false;
 
+    const newTransaction: Transaction = {
+      id: "temp-" + Date.now(),
+      merchant: input.merchant,
+      amount: parsedAmount,
+      category: input.category,
+      date: new Date().toISOString().slice(0, 10),
+    };
+
+    // Optimistically update UI immediately
+    setTransactions((prev) => [newTransaction, ...prev]);
+
     try {
-      await transactionService.createTransaction(userId, {
+      const id = await transactionService.createTransaction(userId, {
         merchant: input.merchant,
         amount: parsedAmount,
         category: input.category,
       });
 
-      const refreshed = await transactionService.getTransactions(userId);
-      setTransactions(refreshed);
+      // Replace temp id with real id from Firebase
+      setTransactions((prev) =>
+        prev.map((t) => (t.id === newTransaction.id ? { ...t, id } : t))
+      );
       return true;
     } catch {
+      // Rollback on error
+      setTransactions((prev) => prev.filter((t) => t.id !== newTransaction.id));
       setError("Unable to save transaction.");
       return false;
     }
@@ -73,11 +88,14 @@ export function useTransactions(userId?: string) {
   async function deleteTransaction(transactionId: string) {
     if (!userId) return false;
     try {
+      // Optimistically remove from UI
+      setTransactions((prev) => prev.filter((t) => t.id !== transactionId));
       await transactionService.deleteTransaction(userId, transactionId);
-      const refreshed = await transactionService.getTransactions(userId);
-      setTransactions(refreshed);
       return true;
     } catch {
+      // Reload on error (could be improved with rollback)
+      const refreshed = await transactionService.getTransactions(userId);
+      setTransactions(refreshed);
       setError("Unable to delete transaction.");
       return false;
     }
