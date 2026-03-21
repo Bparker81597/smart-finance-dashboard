@@ -89,12 +89,28 @@ export function useTransactions(userId?: string) {
     }
   }, [userId]);
 
+  const updateTransaction = useCallback(async (transactionId: string, updates: Partial<Transaction>): Promise<boolean> => {
+    if (!userId) return false;
+
+    try {
+      await transactionService.updateTransaction(userId, transactionId, updates);
+      const data = await transactionService.getTransactions(userId);
+      setTransactions(data);
+      return true;
+    } catch (error) {
+      console.error("Failed to update transaction:", error);
+      setError("Unable to update transaction.");
+      return false;
+    }
+  }, [userId]);
+
   return {
     search,
     setSearch,
     filteredTransactions,
     totals,
     addTransaction,
+    updateTransaction,
     deleteTransaction,
     isLoading: isLoading && !hasLoaded,
     error,

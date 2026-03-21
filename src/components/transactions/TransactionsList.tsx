@@ -1,17 +1,21 @@
-import { Trash2 } from "lucide-react";
+import { useState } from "react";
+import { Trash2, Edit2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CreditCard, DollarSign } from "lucide-react";
 import { Transaction } from "../../types/finance";
 import { formatCurrency } from "../../utils/currency";
+import { EditTransactionModal } from "./EditTransactionModal";
 
 interface TransactionsListProps {
   transactions: Transaction[];
   onDeleteTransaction: (id: string) => Promise<boolean>;
+  onEditTransaction: (id: string, updates: Partial<Transaction>) => Promise<boolean>;
 }
 
-export function TransactionsList({ transactions, onDeleteTransaction }: TransactionsListProps) {
+export function TransactionsList({ transactions, onDeleteTransaction, onEditTransaction }: TransactionsListProps) {
+  const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
   return (
     <Card className="rounded-2xl shadow-sm border-slate-200">
       <CardHeader>
@@ -49,6 +53,14 @@ export function TransactionsList({ transactions, onDeleteTransaction }: Transact
                   <Button
                     variant="ghost"
                     size="icon"
+                    onClick={() => setEditingTransaction(transaction)}
+                    className="h-8 w-8 text-slate-400 hover:text-blue-500 hover:bg-blue-50"
+                  >
+                    <Edit2 className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
                     onClick={async () => {
                       const success = await onDeleteTransaction(transaction.id);
                       if (!success) {
@@ -65,6 +77,14 @@ export function TransactionsList({ transactions, onDeleteTransaction }: Transact
           })
         )}
       </CardContent>
+
+      {editingTransaction && (
+        <EditTransactionModal
+          transaction={editingTransaction}
+          onSave={onEditTransaction}
+          onClose={() => setEditingTransaction(null)}
+        />
+      )}
     </Card>
   );
 }
