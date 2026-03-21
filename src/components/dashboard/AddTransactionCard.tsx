@@ -9,7 +9,7 @@ interface AddTransactionCardProps {
     merchant: string;
     amount: string;
     category: TransactionCategory;
-  }) => Promise<boolean>;
+  }) => void;
 }
 
 export function AddTransactionCard({ onAddTransaction }: AddTransactionCardProps) {
@@ -19,15 +19,13 @@ export function AddTransactionCard({ onAddTransaction }: AddTransactionCardProps
     category: "General",
   });
 
-  async function handleSubmit() {
+  function handleSubmit() {
     const parsedAmount = Number(form.amount);
     if (!form.merchant || Number.isNaN(parsedAmount) || parsedAmount === 0) return;
     
-    // Optimistic - reset immediately, Firebase saves in background
-    const success = await onAddTransaction(form);
-    if (success) {
-      setForm({ merchant: "", amount: "", category: "General" });
-    }
+    // Fire and forget - no waiting
+    onAddTransaction(form);
+    setForm({ merchant: "", amount: "", category: "General" });
   }
 
   return (
