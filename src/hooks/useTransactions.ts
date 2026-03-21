@@ -51,48 +51,42 @@ export function useTransactions(userId?: string) {
     };
   }, [transactions]);
 
-  const addTransaction = useCallback((input: AddTransactionInput): void => {
-    if (!userId) return;
+  const addTransaction = useCallback(async (input: AddTransactionInput): Promise<boolean> => {
+    if (!userId) return false;
     const parsedAmount = Number(input.amount);
-    if (!input.merchant || Number.isNaN(parsedAmount) || parsedAmount === 0) return;
+    if (!input.merchant || Number.isNaN(parsedAmount) || parsedAmount === 0) return false;
 
-    const newTransaction: Transaction = {
-      id: "temp-" + Date.now(),
-      merchant: input.merchant,
-      amount: parsedAmount,
-      category: input.category,
-      date: new Date().toISOString().slice(0, 10),
-    };
-
-    // Update UI immediately (synchronous)
-    setTransactions((prev) => [newTransaction, ...prev]);
-
-    // Save to Firebase in background (fire and forget)
-    transactionService.createTransaction(userId, {
-      merchant: input.merchant,
-      amount: parsedAmount,
-      category: input.category,
-    }).then((id) => {
-      setTransactions((prev) =>
-        prev.map((t) => (t.id === newTransaction.id ? { ...t, id } : t))
-      );
-    }).catch(() => {
-      setTransactions((prev) => prev.filter((t) => t.id !== newTransaction.id));
+    try {
+      await transactionService.createTransaction(userId, {
+        merchant: input.merchant,
+        amount: parsedAmount,
+        category: input.category,
+      });
+      
+      // Reload transactions to get the new one with proper ID
+      const data = await transactionService.getTransactions(userId);
+      setTransactions(data);
+      return true;
+    } catch (error) {
+      console.error("Failed to add transaction:", error);
       setError("Unable to save transaction.");
-    });
+      return false;
+    }
   }, [userId]);
 
-  const deleteTransaction = useCallback((transactionId: string): void => {
-    if (!userId) return;
-    
-    // Remove from UI immediately
-    setTransactions((prev) => prev.filter((t) => t.id !== transactionId));
-    
-    // Delete in background
-    transactionService.deleteTransaction(userId, transactionId).catch(() => {
-      transactionService.getTransactions(userId).then(setTransactions);
+  const deleteTransaction = useCallback(async (transactionId: string): Promise<boolean> => {
+    if (!userId) return false;
+
+    try {
+      await transactionService.deleteTransaction(userId, transactionId);
+      const data = await transactionService.getTransactions(userId);
+      setTransactions(data);
+      return true;
+    } catch (error) {
+      console.error("Failed to delete transaction:", error);
       setError("Unable to delete transaction.");
-    });
+      return false;
+    }
   }, [userId]);
 
   return {

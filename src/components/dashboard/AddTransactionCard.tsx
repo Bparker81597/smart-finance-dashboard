@@ -9,7 +9,7 @@ interface AddTransactionCardProps {
     merchant: string;
     amount: string;
     category: TransactionCategory;
-  }) => void;
+  }) => Promise<boolean>;
 }
 
 export function AddTransactionCard({ onAddTransaction }: AddTransactionCardProps) {
@@ -18,14 +18,18 @@ export function AddTransactionCard({ onAddTransaction }: AddTransactionCardProps
     amount: "",
     category: "General",
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  function handleSubmit() {
+  async function handleSubmit() {
     const parsedAmount = Number(form.amount);
     if (!form.merchant || Number.isNaN(parsedAmount) || parsedAmount === 0) return;
-    
-    // Fire and forget - no waiting
-    onAddTransaction(form);
-    setForm({ merchant: "", amount: "", category: "General" });
+
+    setIsSubmitting(true);
+    const success = await onAddTransaction(form);
+    if (success) {
+      setForm({ merchant: "", amount: "", category: "General" });
+    }
+    setIsSubmitting(false);
   }
 
   return (
@@ -61,8 +65,8 @@ export function AddTransactionCard({ onAddTransaction }: AddTransactionCardProps
           <option>Subscriptions</option>
           <option>Dining</option>
         </select>
-        <Button onClick={handleSubmit} className="w-full rounded-2xl">
-          Add Transaction
+        <Button onClick={handleSubmit} className="w-full rounded-2xl" disabled={isSubmitting}>
+          {isSubmitting ? "Adding..." : "Add Transaction"}
         </Button>
         <p className="text-xs text-slate-500 leading-5">
           Transaction appears instantly, saves to Firebase in background.

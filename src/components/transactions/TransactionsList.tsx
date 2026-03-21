@@ -8,7 +8,7 @@ import { formatCurrency } from "../../utils/currency";
 
 interface TransactionsListProps {
   transactions: Transaction[];
-  onDeleteTransaction: (id: string) => void;
+  onDeleteTransaction: (id: string) => Promise<boolean>;
 }
 
 export function TransactionsList({ transactions, onDeleteTransaction }: TransactionsListProps) {
@@ -49,7 +49,12 @@ export function TransactionsList({ transactions, onDeleteTransaction }: Transact
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => onDeleteTransaction(transaction.id)}
+                    onClick={async () => {
+                      const success = await onDeleteTransaction(transaction.id);
+                      if (!success) {
+                        alert("Failed to delete transaction");
+                      }
+                    }}
                     className="h-8 w-8 text-slate-400 hover:text-red-500 hover:bg-red-50"
                   >
                     <Trash2 className="h-4 w-4" />
